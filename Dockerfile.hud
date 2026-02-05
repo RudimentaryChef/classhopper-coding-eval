@@ -49,8 +49,8 @@ RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | b
 # =================================================================
 
 # Clone the repository
-ARG REPO_URL
-ARG FOLDER_NAME="classhopper"
+ARG REPO_URL=https://github.com/RudimentaryChef/classhopper-coding-eval.git
+ARG FOLDER_NAME=classhopper
 
 ENV REPO_URL=${REPO_URL}
 ENV FOLDER_NAME=${FOLDER_NAME}
