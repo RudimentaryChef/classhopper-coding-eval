@@ -1,0 +1,31 @@
+# prettier-ignore
+name: "build and deploy classhopper frontend to github"
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout the code
+        uses: actions/checkout@v4
+      - name: Build Frontend
+        run: docker build . -t ${{ secrets.DOCKER_USERNAME }}/mvpfrontend:latest
+      - name: Log in to Dockerhub
+        run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+      - name: push docker image backend to dockerhub
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/mvpfrontend:latest
+
+  deploy:
+    needs: build
+    runs-on: self-hosted
+    steps:
+      - name: pull frontend image
+        run: docker pull ${{ secrets.DOCKER_USERNAME }}/mvpfrontend:latest
+      - name: cleanup prev images
+        run: docker rm -f MVPFrontend && docker system prune
+      - name: run frontend image
+        run: docker run -d -p 80:3000 --name MVPFrontend ${{ secrets.DOCKER_USERNAME}}/mvpfrontend:latest

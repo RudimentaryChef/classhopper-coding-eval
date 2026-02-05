@@ -1,0 +1,40 @@
+# name: "build and deploy classhopper to github"
+
+# on:
+#   push:
+#     branches:
+#       - main
+
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: checkout the code
+#         uses: actions/checkout@v4
+#       - name: Build Backend
+#         run: docker build ./Backend -t adikrishiscool/mvpbackend:latest
+#       - name: Build Frontend
+#         run: docker build ./frontend -t adikrishiscool/mvpfrontend:latest
+#       - name: Log in to Dockerhub
+#         run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+#       - name: push docker image backend to dockerhub
+#         run: docker push adikrishiscool/mvpbackend:latest
+#       - name: push dockerimage frontend to dockerhub
+#         run: docker push adikrishiscool/mvpfrontend:latest
+
+#   deploy:
+#     needs: build
+#     runs-on: self-hosted
+#     steps:
+#       - name: Log in to Dockerhub
+#         run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+#       - name: pull backend image
+#         run: docker pull adikrishiscool/mvpbackend:latest
+#       - name: pull frontend image
+#         run: docker pull adikrishiscool/mvpfrontend:latest
+#       - name: delete previous docker images (prune)
+#         run: docker rm -f MVPBackend && docker rm -f MVPFrontend
+#       - name: run backend image
+#         run: docker run -d -p 8000:8000 --name MVPBackend adikrishiscool/mvpbackend:latest
+#       - name: run frontend image
+#         run: docker run -d -p 80:3000 --name MVPFrontend adikrishiscool/mvpfrontend:latest
