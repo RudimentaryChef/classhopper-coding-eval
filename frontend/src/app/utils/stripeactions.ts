@@ -64,7 +64,7 @@ export async function createStripeAccountLink() {
     })
 
     instructor = res.data[0]
-    if (instructor.length === 0) {
+    if (!instructor || res.data.length === 0) {
         const instructor_id = await createTeacher()
         if (instructor_id === -1) {
             toast.error("Error creating instructor")
@@ -73,8 +73,6 @@ export async function createStripeAccountLink() {
         instructor = {
             id: instructor_id
         }
-    } else {
-        instructor = instructor[0]
     }
 
     if (!instructor.stripeConnectedId) {
@@ -125,7 +123,7 @@ export async function buyClassToPlatform(class_id: string, cart: ClassTime[]) {
         return {
             price_data: {
                 currency: "usd",
-                unit_amount: Math.round(Number(res.data.course_Price) * 100) * 100,
+                unit_amount: Math.round(Number(res.data.course_Price) * 100),
                 product_data: {
                     name: res.data.course_Name,
                     description: t,
@@ -175,7 +173,7 @@ export async function buyClassToInstructor(class_id: string, cart: ClassTime[]) 
         return {
             price_data: {
                 currency: "usd",
-                unit_amount: Math.round(Number(res.data.course_Price)) * 100,
+                unit_amount: Math.round(Number(res.data.course_Price) * 100),
                 product_data: {
                     name: res.data.course_Name,
                     description: t,

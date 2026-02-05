@@ -46,7 +46,7 @@ export function formatPhoneNumber(input: string): string {
 	}
 
 	// Format the normalized input as +1-XXX-XXX-XXXX
-	return `+1 ${normalizedInput.slice(0, 3)}-${normalizedInput.slice(3, 6)}-${normalizedInput.slice(7)}`;
+	return `+1 ${normalizedInput.slice(0, 3)}-${normalizedInput.slice(3, 6)}-${normalizedInput.slice(6)}`;
 }
 
 export function formatTime(input: string): string {
@@ -81,7 +81,7 @@ export function formatTime(input: string): string {
 		return "def"; // Ignore invalid formats
 	}
 
-	if (hours < 1 || hours > 12 || minutes >= 59) return "def"; // Ignore invalid times
+	if (hours < 1 || hours > 12 || minutes > 59) return "def"; // Ignore invalid times
 
 	if (!period) period = hours !== 12 ? "PM" : "AM"; // Default to PM unless explicitly set
 
