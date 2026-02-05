@@ -26,8 +26,9 @@ RUN apt-get update -y \
 
 RUN update-ca-certificates
 
-# Configure ubuntu user (already exists in Ubuntu 24.04)
-RUN echo "ubuntu ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+# Configure ubuntu user (may already exist in Ubuntu 24.04)
+RUN id -u ubuntu &>/dev/null || useradd -m -s /bin/bash -u 1000 ubuntu; \
+    echo "ubuntu ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 WORKDIR /
 
