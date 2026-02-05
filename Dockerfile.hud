@@ -57,12 +57,16 @@ ENV FOLDER_NAME=${FOLDER_NAME}
 ENV PROJECT_DIR=/home/ubuntu/${FOLDER_NAME}
 
 # Clone and fetch all branches (needed for runtime checkout of baseline/test/golden)
+# Configure git to not prompt for credentials
+RUN git config --global credential.helper store && \
+    git config --global --add url."https://".insteadOf git://
+
 RUN --mount=type=secret,id=CODING_GITHUB_TOKEN,uid=1000 \
     if [ -f /run/secrets/CODING_GITHUB_TOKEN ]; then \
         CODING_GITHUB_TOKEN=$(cat /run/secrets/CODING_GITHUB_TOKEN) && \
         git clone https://${CODING_GITHUB_TOKEN}@${REPO_URL#https://} ${PROJECT_DIR}; \
     else \
-        git clone ${REPO_URL} ${PROJECT_DIR}; \
+        GIT_TERMINAL_PROMPT=0 git clone ${REPO_URL} ${PROJECT_DIR}; \
     fi && \
     cd ${PROJECT_DIR} && \
     git fetch --all
