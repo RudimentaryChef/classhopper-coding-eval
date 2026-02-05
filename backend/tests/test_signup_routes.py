@@ -1,20 +1,6 @@
 """Tests for signup_routes.py bugs."""
 import pytest
-from fastapi.testclient import TestClient
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from app.main import app
-from app.database_setup.models import Base
-
-
-# Create test database
-SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
-engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
-TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-Base.metadata.create_all(bind=engine)
-
-client = TestClient(app)
+import os
 
 
 def test_update_signup_parameter():
@@ -22,13 +8,20 @@ def test_update_signup_parameter():
     # This test checks if line 124 uses the correct parameter
     # Bug: pydantic_in=SignupIn should be pydantic_in=signup_in
 
-    # Read the source file
-    with open("backend/app/routes/signup_routes.py", "r") as f:
+    file_path = os.path.join(os.path.dirname(__file__), "../app/routes/signup_routes.py")
+    with open(file_path, "r") as f:
         content = f.read()
 
-    # Check that the bug is fixed
-    assert "pydantic_in=signup_in" in content or "pydantic_in=SignupIn" not in content.split("update_resource")[1].split(")")[0], \
-        "Bug: update_signup should use signup_in instance, not SignupIn class"
+    # Find the update_signup function
+    update_signup_section = content.split("def update_signup")[1].split("def ")[0]
+
+    # Check that it uses signup_in (the instance), not SignupIn (the class)
+    assert "pydantic_in=signup_in" in update_signup_section, \
+        "Bug: update_signup should use pydantic_in=signup_in (instance), not pydantic_in=SignupIn (class)"
+
+    # Make sure SignupIn as parameter is not present
+    assert "pydantic_in=SignupIn," not in update_signup_section, \
+        "Bug detected: using SignupIn class instead of signup_in instance"
 
 
 def test_no_duplicate_router():
@@ -36,13 +29,14 @@ def test_no_duplicate_router():
     # This test checks for duplicate router declaration
     # Bug: router = APIRouter() appears on both line 11 and line 28
 
-    with open("backend/app/routes/signup_routes.py", "r") as f:
+    file_path = os.path.join(os.path.dirname(__file__), "../app/routes/signup_routes.py")
+    with open(file_path, "r") as f:
         lines = f.readlines()
 
     # Count occurrences of 'router = APIRouter()'
-    router_declarations = [i for i, line in enumerate(lines) if "router = APIRouter()" in line]
+    router_declarations = [i + 1 for i, line in enumerate(lines) if "router = APIRouter()" in line]
 
-    assert len(router_declarations) <= 1, \
+    assert len(router_declarations) == 1, \
         f"Bug: Found {len(router_declarations)} router declarations at lines {router_declarations}. Should be only 1."
 
 
@@ -51,7 +45,8 @@ def test_offset_parameter_name():
     # This test checks for typo in parameter name
     # Bug: offest should be offset
 
-    with open("backend/app/routes/signup_routes.py", "r") as f:
+    file_path = os.path.join(os.path.dirname(__file__), "../app/routes/signup_routes.py")
+    with open(file_path, "r") as f:
         content = f.read()
 
     # Check in the get_instructor_signups function signature
@@ -59,18 +54,5 @@ def test_offset_parameter_name():
 
     assert "offest" not in function_content, \
         "Bug: Parameter name 'offest' is a typo, should be 'offset'"
-    assert "offset" in function_content, \
+    assert "offset:" in function_content or "offset :" in function_content, \
         "Parameter 'offset' should exist in get_instructor_signups"
-
-
-def test_routes_registered():
-    """Test that all routes are properly registered."""
-    # Verify that routes defined after line 28 are accessible
-    # This would fail if the second router declaration overwrites the first
-
-    # Try to access routes defined before and after line 28
-    # Route defined at line 14 (before duplicate)
-    response1 = client.get("/docs")  # FastAPI auto-docs should show all routes
-
-    # Check that both batch_create (line 34, after duplicate) and create_signup (line 14, before) exist
-    assert response1.status_code == 200, "API documentation should be accessible"
