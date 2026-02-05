@@ -85,7 +85,7 @@ USER ubuntu
 
 # Install Python dependencies
 WORKDIR ${PROJECT_DIR}/backend
-RUN pip install --user --no-cache-dir \
+RUN pip install --user --no-cache-dir --break-system-packages \
     fastapi==0.115.12 \
     uvicorn==0.34.0 \
     pydantic==2.10.6 \
