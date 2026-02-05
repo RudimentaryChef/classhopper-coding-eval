@@ -23,11 +23,6 @@ async def create_signup(signup_in: SignupIn, db: Session = Depends(get_db)):
         return create_resource(pydantic_in=signup_in, db_model=Signup, db=db)
 
 
-
-
-router = APIRouter()
-
-
 # Assuming your existing Pydantic models are imported:
 # SignupIn, SignupOut, AvailabilityQuery, etc.
 
@@ -121,14 +116,14 @@ async def filter_signups(
 #Update Route(s)
 @router.post("/signup/update", response_model=SignupIn)
 async def update_signup(signup_id : Union[int,str],signup_in: SignupIn,db: Session = Depends(get_db)):
-    updated_signup = await update_resource(model=Signup, id=signup_id,pydantic_in=SignupIn,db=db,idName="id")
+    updated_signup = await update_resource(model=Signup, id=signup_id,pydantic_in=signup_in,db=db,idName="id")
     return updated_signup
 
 @router.get("/instructors/{instructor_id}/signups", response_model=List[SignupOut])
 def get_instructor_signups(
         instructor_id: int,
         limit: int = Query(10, ge=1, description="Maximum number of signup records to return"),
-        offest: int = Query(0, ge=0, description="Number of signup records to skip"),
+        offset: int = Query(0, ge=0, description="Number of signup records to skip"),
         sort_by: str = Query("created_at", description="Signup attribute to sort by (any attribute of Signup)"),
         order: str = Query("desc", description="Sort order: 'asc' for ascending or 'desc' for descending"),
         from_date: Optional[datetime] = Query(
@@ -151,7 +146,7 @@ def get_instructor_signups(
 
     Query Parameters:
         - limit (int): Maximum number of signup records to return. Controls the page size. (Default: 10)
-        - offest (int): Number of signup records to skip from the beginning. Useful for pagination. (Default: 0)
+        - offset (int): Number of signup records to skip from the beginning. Useful for pagination. (Default: 0)
         - sort_by (str): The attribute of the Signup model by which the records should be sorted.
           Can be any valid attribute such as 'created_at', 'user_id', etc. (Default: "created_at")
         - order (str): The order of sorting, either 'asc' for ascending or 'desc' for descending.
@@ -191,7 +186,7 @@ def get_instructor_signups(
     #good old pagination
     signups = (
         query.order_by(order_clause)
-        .offset(offest)
+        .offset(offset)
         .limit(limit)
         .all()
     )

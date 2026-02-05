@@ -97,7 +97,7 @@ async def get_by_id(model: Type[T], id: Any, db: Session, idName = "id"):
 async def get_multiple_criteria(
         model: Type[T],
         db: Session,
-        criteria: Dict[str,any],
+        criteria: Dict[str, Any],
         multiple: bool = True
 ) -> Any:
     for field in criteria:
