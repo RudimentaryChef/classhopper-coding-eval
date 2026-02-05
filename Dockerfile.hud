@@ -116,10 +116,10 @@ RUN bash -c "source ~/.nvm/nvm.sh --no-use && nvm install 18 && nvm use 18 && nv
 SHELL ["/bin/bash", "--login", "-c"]
 
 # Install frontend dependencies
-RUN npm install
+RUN npm install --legacy-peer-deps
 
 # Install vitest for frontend testing
-RUN npm install --save-dev vitest@latest @vitejs/plugin-react@latest jsdom@latest @testing-library/react@latest @testing-library/jest-dom@latest
+RUN npm install --legacy-peer-deps --save-dev vitest@latest @vitejs/plugin-react@latest jsdom@latest @testing-library/react@latest @testing-library/jest-dom@latest
 
 # Create dummy .env.local file for frontend
 RUN echo "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=dummy_clerk_pub_key" > .env.local && \
