@@ -4,7 +4,7 @@
     "scenario": "solve-task",
     "args": {
       "problem_id": "fix_backend_bug_1_wrong_parameter",
-      "include_hints": false
+      "hints_enabled": false
     }
   },
   {
@@ -12,7 +12,7 @@
     "scenario": "solve-task",
     "args": {
       "problem_id": "fix_backend_bug_3_typo_offset",
-      "include_hints": false
+      "hints_enabled": false
     }
   },
   {
@@ -20,7 +20,7 @@
     "scenario": "solve-task",
     "args": {
       "problem_id": "fix_frontend_bug_1_phone_format",
-      "include_hints": false
+      "hints_enabled": false
     }
   },
   {
@@ -28,7 +28,7 @@
     "scenario": "solve-task",
     "args": {
       "problem_id": "fix_frontend_bug_3_stripe_amount",
-      "include_hints": false
+      "hints_enabled": false
     }
   },
   {
@@ -36,7 +36,7 @@
     "scenario": "solve-task",
     "args": {
       "problem_id": "fix_all_backend_bugs",
-      "include_hints": false
+      "hints_enabled": false
     }
   },
   {
@@ -44,7 +44,7 @@
     "scenario": "solve-task",
     "args": {
       "problem_id": "fix_all_frontend_bugs",
-      "include_hints": false
+      "hints_enabled": false
     }
   }
 ]
